@@ -1,0 +1,157 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.container {
+  width: 70%;
+  max-width: 1200px;
+  margin: 20px auto 0;
+  border-radius: 30px;
+  background-color: #ffffff;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+  padding: 20px;
+}
+
+.image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.image-container img {
+  max-width: 100%;
+  /* 图像的最大宽度为容器的宽度 */
+  max-height: 100%;
+  /* 图像的最大高度为容器的高度 */
+  margin: 10px;
+  /* 设置图像之间的间距 */
+  object-fit: contain;
+  /* 将图像等比例缩放以适应容器 */
+  /* border: 2px solid black; */
+  /* 添加黑色边框 */
+}
+
+.image-container .image-label {
+  text-align: center;
+  margin-top: 5px;
+  /* margin: 20px; */
+  font-weight: bold;
+  margin-right: 70px;
+  /* 设置横向间距为 50px */
+  margin-left: 70px;
+  /* 设置横向间距为 50px */
+
+}
+
+p {
+  font-size: 20px;
+  /* 设置字体大小为 20 像素 */
+  font-weight: bold;
+  /* 加粗字体 */
+  text-align: center;
+}
+
+.button-container {
+  margin: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-container button {
+  /* background-color: #f2f1f1; */
+  display: inline-block;
+  border-radius: 4px;
+  background-color: #f4eeee;
+  border: none;
+  color: #0c0c0c;
+  text-align: center;
+  font-size: 16px;
+  padding: 10px;
+  width: 120px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin-right: 50px;
+  margin-top: 20px;
+}
+
+.button-container button.selected {
+  /* Add styles for the selected button */
+  background-color: #2de318;
+}
+
+.button-container-next {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 20%;
+  /* background-color: #f2f1f1; */
+  border: none;
+  /* border: 2px solid black; */
+  padding: 10px 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.button-container-next button {
+  /* background-color: #f2f1f1; */
+  display: inline-block;
+  border-radius: 4px;
+  background-color: #f4eeee;
+  border: none;
+  color: #0c0c0c;
+  text-align: center;
+  font-size: 16px;
+  padding: 10px;
+  width: 120px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin-right: 50px;
+  margin-top: 20px;
+}
+
+.audio-player-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.audio-player-container audio {
+  width: 100%;
+  max-width: 400px;
+  /* 设置音频播放器的最大宽度 */
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+}
+
+input[type="submit"] {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition-duration: 0.4s;
+}
+
+input[type="submit"]:hover {
+  background-color: #45a049;
+}
