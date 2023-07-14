@@ -14,6 +14,8 @@ def generate_table(result_list, user_id):
     """
     result_list = [A, A, B, B] len=20
     """
+    if result_list is None:
+        return None
     df = pd.DataFrame()
     df['题号'] = range(1, 11)
     df['题目1'] = ''
@@ -49,8 +51,10 @@ def get_audio():
 
 @app.route('/api/finish', methods=['GET'])
 def finish():
+    global result
     id = str(uuid.uuid4())
     generate_table(result, id)
+    result = []
     return "Finish"
 
 
@@ -64,6 +68,8 @@ def receive_selection():
 
 @app.route('/api/login', methods=['POST'])
 def login():
+    global result
+    result = []
     try:
         return jsonify({'message': 'Login successful'})
     except Exception as e:
@@ -72,4 +78,4 @@ def login():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5500, host="0.0.0.0")
+    app.run(debug=False, port=5500, host="0.0.0.0")
