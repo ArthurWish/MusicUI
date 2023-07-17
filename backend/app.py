@@ -1,4 +1,6 @@
-# -*- coding: utf-8 -*-
+import json
+import os
+from cv2 import exp
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import base64
@@ -8,22 +10,27 @@ from PIL import Image
 from pathlib import Path
 app = Flask(__name__)
 CORS(app)
+os.makedirs("/media/sda1/cyn-workspace/Music_UI/backend/results", exist_ok=True)
 result = []
-exp_foler = "/media/sda1/cyn-workspace/Music_UI/backend/assets/exp"
-def generate_table(result_list, user_id):
+gender,age,id = 0,0,0
+def generate_table(result_list, user_id, gender, age):
     """
     result_list = [A, A, B, B] len=20
     """
     if result_list is None:
         return None
     df = pd.DataFrame()
-    df['题号'] = range(1, int(len(result_list)/2)+1)
+    df['性别'] = [gender] * int(len(result_list) / 3)
+    df['年龄'] = [age] * int(len(result_list) / 3)
+    df['题号'] = range(1, int(len(result_list)/3)+1)
     df['题目1'] = ''
     df['题目2'] = ''
+    df['题目3'] = ''
     # 进行处理和操作，例如将数据存储到数据库或执行其他任务
-    for i in range(int(len(result_list)/2)):
-        df.loc[i, '题目1'] = result_list[i*2]
-        df.loc[i, '题目2'] = result_list[i*2+1]
+    for i in range(int(len(result_list)/3)):
+        df.loc[i, '题目1'] = result_list[i*3]
+        df.loc[i, '题目2'] = result_list[i*3+1]
+        df.loc[i, '题目3'] = result_list[i*3+2]
 
     df.to_excel(f'/media/sda1/cyn-workspace/Music_UI/backend/results/{user_id}.xlsx', index=False)
 
@@ -42,22 +49,24 @@ def get_preaudios():
     
 @app.route("/api/getImages", methods=["POST"])
 def get_images():
-    image_pathes = Path(exp_foler).glob("*.png")
     index = request.form.get('index')
     print("index", index)
-    image1, image2 = None, None
-    for image_path in image_pathes:
-        print(str(image_path))
-        if f"T{int(index)+1}" in str(image_path):
-            print(f"T{int(index)+1}")
-            if image1 is None:
-                image1 = str(image_path)
-            elif image1 is not None:
-                image2 = str(image_path)
-    # assert image1 is not None and image2 is not None
-    print(image1)
-    image1 = Image.open(str(image1))
-    image2 = Image.open(str(image2))
+    exp_folder = f"/media/sda1/cyn-workspace/Music_UI/backend/assets/exp2/task{int(index)+1}"
+    # image_pathes = Path(exp_foler).glob("*.png")
+    
+    # image1, image2 = None, None
+    # for image_path in image_pathes:
+    #     print(str(image_path))
+    #     if f"T{int(index)+1}" in str(image_path):
+    #         print(f"T{int(index)+1}")
+    #         if image1 is None:
+    #             image1 = str(image_path)
+    #         elif image1 is not None:
+    #             image2 = str(image_path)
+    # # assert image1 is not None and image2 is not None
+    # print(image1)
+    image1 = Image.open(os.path.join(exp_folder, "A.png"))
+    image2 = Image.open(os.path.join(exp_folder, "B.png"))
     resized_image1 = image1.resize((239, 412))
     resized_image2 = image2.resize((239, 412))
     resized_image1.save(f'./{index}-A.png')
@@ -76,38 +85,49 @@ def get_images():
 
 @app.route("/api/getAudio", methods=["POST"])
 def get_audio():
-    audio_pathes = Path(exp_foler).glob("*.mp3")
+    audio_list = []
     index = request.form.get('index')
-    for audio_path in audio_pathes:
-        if f"T{int(index)+1}" in str(audio_path):
-            audio = str(audio_path)
-    with open(audio, 'rb') as file:
+    print("index", index)
+    exp_folder = f"/media/sda1/cyn-workspace/Music_UI/backend/assets/exp2/task{int(index)+1}"
+    # audio_pathes = Path(exp_foler).glob("*.mp3")
+    index = request.form.get('index')
+    # for audio_path in audio_pathes:
+    #     if f"T{int(index)+1}" in str(audio_path):
+    #         audio = str(audio_path)
+    with open(os.path.join(exp_folder, "A.mp3"), 'rb') as file:
         audio_data = file.read()
-    base64_audio = base64.b64encode(audio_data).decode('utf-8')
-    return jsonify({"audio": base64_audio})
+        audio_list.append(base64.b64encode(audio_data).decode('utf-8'))
+    with open(os.path.join(exp_folder, "B.mp3"), 'rb') as file:
+        audio_data = file.read()
+        audio_list.append(base64.b64encode(audio_data).decode('utf-8'))
+    return jsonify({"audio": audio_list})
 
 
 @app.route('/api/finish', methods=['GET'])
 def finish():
-    global result
-    id = str(uuid.uuid4())
-    generate_table(result, id)
+    global result,gender,age,id
+    generate_table(result, id, gender, age)
     result = []
     return "Finish"
 
 
-@app.route('/api/sendSelection', methods=['POST'])
+@app.route('/api/sendSelections', methods=['POST'])
 def receive_selection():
-    data = request.form.get('data')
-    result.append(data)
-    print(data)
+    data = json.loads(request.form.get('selections'))
+    for sel in data:
+        result.append(sel)
+        print(sel)
     return 'Data received'  # 返回响应，表示数据已接收
 
 
 @app.route('/api/login', methods=['POST'])
 def login():
-    global result
+    global result,gender,age,id
+    data = request.get_json()
+    gender, age = data['gender'], data['age']
     result = []
+    id = str(uuid.uuid4())
+    # generate_table(result, id, gender, age)
     try:
         return jsonify({'message': 'Login successful'})
     except Exception as e:
