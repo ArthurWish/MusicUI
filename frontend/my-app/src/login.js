@@ -35,11 +35,19 @@ function Login() {
     // if (true) {
     if (audio1Played && audio2Played) {
       try {
-        await axios.post('http://10.73.3.223:55231/api/login', {
+        const response = await axios.post('http://10.73.3.223:55231/api/login', {
           gender,
           age,
         });
-        navigate('/music');
+        const loginState = response.data["login_state"]
+        console.log("loginState", loginState)
+        if (loginState === true) {
+          navigate('/music');
+        }
+        else {
+          alert("请等待其他用户填写完成")
+        }
+
       } catch (error) {
         console.error(error);
       }
@@ -67,15 +75,15 @@ function Login() {
             <input type="text" value={gender} onChange={(e) => setGender(e.target.value)} />
           </label>
         </div>
-        <div style={{marginBottom: "10px"}}>
+        <div style={{ marginBottom: "10px" }}>
           <label>
             年龄:
             <input type="text" value={age} onChange={(e) => setAge(e.target.value)} />
           </label>
         </div>
-        
+
         {/* <input type="submit" value="完成" disabled={!audio1Played || !audio2Played} /> */}
-        <input type="submit" value="完成"  />
+        <input type="submit" value="完成" />
       </form>
     </div>
   );

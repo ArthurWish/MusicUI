@@ -19,8 +19,8 @@ function Music() {
     const [selectedButtons, setSelectedButtons] = useState([]);
     const [audio1Played, setAudio1Played] = useState(false);
     const [audio2Played, setAudio2Played] = useState(false);
-    const [audio3Played, setAudio3Played] = useState(false);
-    const [audio4Played, setAudio4Played] = useState(false);
+    // const [audio3Played, setAudio3Played] = useState(false);
+    // const [audio4Played, setAudio4Played] = useState(false);
     const handleMouseEnter = () => {
         setIsHovered(true);
     };
@@ -37,13 +37,13 @@ function Music() {
         setAudio2Played(true);
     };
 
-    const handleAudio3Ended = () => {
-        setAudio3Played(true);
-    };
+    // const handleAudio3Ended = () => {
+    //     setAudio3Played(true);
+    // };
 
-    const handleAudio4Ended = () => {
-        setAudio4Played(true);
-    };
+    // const handleAudio4Ended = () => {
+    //     setAudio4Played(true);
+    // };
 
     const fetchData = async () => {
         // console.log("index", index)
@@ -84,7 +84,7 @@ function Music() {
     }, [nextButtonClickCount]);
     const handleClick = async (event) => {
         event.preventDefault();
-        if (audio1Played && audio2Played && audio3Played && audio4Played) {
+        if (audio1Played && audio2Played) {
             setButtonAState(false);
             setButtonBState(false);
             setButtonCState(false);
@@ -101,8 +101,8 @@ function Music() {
             console.log("nextButtonClickCount", nextButtonClickCount);
             setAudio1Played(false);
             setAudio2Played(false);
-            setAudio3Played(false);
-            setAudio4Played(false);
+            // setAudio3Played(false);
+            // setAudio4Played(false);
         } else {
             alert('请先聆听完音频');
         }
@@ -168,7 +168,7 @@ function Music() {
                 <div class="image-label">B</div>
             </div>
             <div>
-                <p>1.A图的字体布局与下面哪个音乐片段最匹配</p>
+                <p>1.A图和B图的字体布局与下面哪个音乐片段最匹配?</p>
                 <h3 style={{ textAlign: 'center' }}>音乐A</h3>
                 <div class="audio-player-container">
                     <ReactAudioPlayer src={audioSrc1} controls onEnded={handleAudio1Ended} />
@@ -178,12 +178,17 @@ function Music() {
                     <ReactAudioPlayer src={audioSrc2} controls onEnded={handleAudio2Ended} />
                 </div>
                 <div class="button-container">
+                    <h3 style={{marginRight: "20px", marginTop: "50px"}}>图片A</h3>
                     <button style={{ backgroundColor: buttonAState ? '#4CAF50' : '#f4eeee' }} onClick={() => handleSelection('A1')}>音乐A</button>
                     <button style={{ backgroundColor: buttonBState ? '#4CAF50' : '#f4eeee' }} onClick={() => handleSelection('B1')}>音乐B</button>
                 </div>
-
+                <div class="button-container">
+                    <h3 style={{marginRight: "20px", marginTop: "50px"}}>图片B</h3>
+                    <button style={{ backgroundColor: buttonCState ? '#4CAF50' : '#f4eeee' }} onClick={() => handleSelection('A2')}>音乐A</button>
+                    <button style={{ backgroundColor: buttonDState ? '#4CAF50' : '#f4eeee' }} onClick={() => handleSelection('B2')}>音乐B</button>
+                </div>
             </div>
-            <div>
+            {/* <div>
                 <p>2.B图的字体布局与下面哪个音乐片段最匹配</p>
                 <h3 style={{ textAlign: 'center' }}>音乐A</h3>
                 <div class="audio-player-container">
@@ -197,9 +202,9 @@ function Music() {
                     <button style={{ backgroundColor: buttonCState ? '#4CAF50' : '#f4eeee' }} onClick={() => handleSelection('A2')}>音乐A</button>
                     <button style={{ backgroundColor: buttonDState ? '#4CAF50' : '#f4eeee' }} onClick={() => handleSelection('B2')}>音乐B</button>
                 </div>
-            </div>
+            </div> */}
             <div>
-                <p>3. 你更喜欢哪个文字版式</p>
+                <p>2. 你更喜欢哪个文字版式</p>
                 <div class="button-container">
                     <button style={{ backgroundColor: buttonEState ? '#4CAF50' : '#f4eeee' }} onClick={() => handleSelection('A3')}>图片A</button>
                     <button style={{ backgroundColor: buttonFState ? '#4CAF50' : '#f4eeee' }} onClick={() => handleSelection('B3')}>图片B</button>

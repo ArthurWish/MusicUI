@@ -1,19 +1,23 @@
 import json
 import os
-from cv2 import exp
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import base64
 import pandas as pd
 import uuid
 from PIL import Image
-from pathlib import Path
 app = Flask(__name__)
 CORS(app)
 os.makedirs("/media/sda1/cyn-workspace/Music_UI/backend/results", exist_ok=True)
 result = []
+login_state = True
 gender,age,id = 0,0,0
 def generate_table(result_list, user_id, gender, age):
+    def split_list(lst, size):
+        return [sort_list(lst[i:i+size]) for i in range(0, len(lst), size)]
+    def sort_list(lst):
+        sorted_lst = sorted(lst, key=lambda x: int(x[1:]))
+        return sorted_lst
     """
     result_list = [A, A, B, B] len=20
     """
@@ -26,11 +30,12 @@ def generate_table(result_list, user_id, gender, age):
     df['题目1'] = ''
     df['题目2'] = ''
     df['题目3'] = ''
+    result_list = split_list(result_list, 3)
     # 进行处理和操作，例如将数据存储到数据库或执行其他任务
-    for i in range(int(len(result_list)/3)):
-        df.loc[i, '题目1'] = result_list[i*3]
-        df.loc[i, '题目2'] = result_list[i*3+1]
-        df.loc[i, '题目3'] = result_list[i*3+2]
+    for i, result in enumerate(result_list):
+        df.loc[i, '题目1'] = result[0]
+        df.loc[i, '题目2'] = result[1]
+        df.loc[i, '题目3'] = result[2]
 
     df.to_excel(f'/media/sda1/cyn-workspace/Music_UI/backend/results/{user_id}.xlsx', index=False)
 
@@ -49,6 +54,9 @@ def get_preaudios():
     
 @app.route("/api/getImages", methods=["POST"])
 def get_images():
+    global login_state
+    login_state = False
+    
     index = request.form.get('index')
     print("index", index)
     exp_folder = f"/media/sda1/cyn-workspace/Music_UI/backend/assets/exp2/task{int(index)+1}"
@@ -105,9 +113,12 @@ def get_audio():
 
 @app.route('/api/finish', methods=['GET'])
 def finish():
-    global result,gender,age,id
+    # data = json.loads()
+    id = str(uuid.uuid4())
+    global result,gender,age,login_state
     generate_table(result, id, gender, age)
     result = []
+    login_state = True
     return "Finish"
 
 
@@ -122,14 +133,13 @@ def receive_selection():
 
 @app.route('/api/login', methods=['POST'])
 def login():
-    global result,gender,age,id
+    global result,gender,age,login_state
     data = request.get_json()
     gender, age = data['gender'], data['age']
-    result = []
-    id = str(uuid.uuid4())
+    # result = []
     # generate_table(result, id, gender, age)
     try:
-        return jsonify({'message': 'Login successful'})
+        return jsonify({'login_state': login_state})
     except Exception as e:
         # 返回错误响应
         return jsonify({'error': str(e)}), 500
