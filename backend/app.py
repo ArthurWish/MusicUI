@@ -115,10 +115,14 @@ def get_audio():
 def finish():
     # data = json.loads()
     id = str(uuid.uuid4())
+    print(id)
     global result,gender,age,login_state
     generate_table(result, id, gender, age)
     result = []
-    login_state = True
+    if login_state == False:
+        login_state = True
+    else:
+        print("Error!")
     return "Finish"
 
 
@@ -133,9 +137,12 @@ def receive_selection():
 
 @app.route('/api/login', methods=['POST'])
 def login():
-    global result,gender,age,login_state
-    data = request.get_json()
-    gender, age = data['gender'], data['age']
+    global login_state
+    if login_state == True:
+        global result, gender,age
+        data = request.get_json()
+        gender, age = data['gender'], data['age']
+        result = []
     # result = []
     # generate_table(result, id, gender, age)
     try:
